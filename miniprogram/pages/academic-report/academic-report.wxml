@@ -1,0 +1,9 @@
+<!--miniprogram/pages/academic-report/academic-report.wxml-->
+<view class="container">
+  <!-- <text>点击选择日期</text> -->
+  <picker mode="date" value="{{date}}" start="2019-10-25" end="2022-11-30" bindchange="bindDateChange">
+    <view class="picker">
+      <text class="select_date">点击选择日期：{{date}}</text>
+    </view>
+  </picker>
+</view>

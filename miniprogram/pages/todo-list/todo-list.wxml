@@ -1,0 +1,62 @@
+<!--miniprogram/pages/todo-list/todo-list.wxml-->
+<view id="page">
+  <!-- 1 导航 -->
+  <view id="nav">
+    <!-- 1.1 左侧待办 -->
+    <view bindtap="clk_navDB" class="{{navDB}}">
+      <text>待办</text>
+    </view>
+    <!-- 1.2 右侧已办 -->
+    <view bindtap="clk_navYB" class="{{navYB}}">
+      <text>已办</text>
+    </view>
+  </view>
+
+  <!-- 2 下方内容 -->
+  <view id="body">
+    <!-- 2.1 待办 -->
+    <view wx:if="{{cond_db_yb}}" id="db">
+      <!-- 待办提示 -->
+      <view class="guide">
+        <text>点击可移至"已办"</text>
+      </view>
+      <!-- 待办列表 -->
+      <view class="list" wx:for="{{array_db}}" wx:key="key" id="{{index}}" bindtap="clk_db2yb">
+        {{item}}
+      </view>
+      <!-- 添加待办按钮 -->
+      <view class="btn" wx:if="{{cond_btn_area}}">
+        <button bindtap="clk_addDb" type="primary">添加事项</button>
+      </view>
+      <!-- 输入待办事项 -->
+      <view id="area" wx:if="{{!cond_btn_area}}">
+        <textarea bindconfirm="inputed" auto-height placeholder="输入新事项并点击完成"></textarea>
+      </view>
+      <!-- 清空待办按钮 -->
+      <!-- <view class="btn">
+        <button bindtap="clk_clrDb" type="warn" disabled="{{array_db.length==0}}">
+          清空"待办"
+        </button>
+      </view> -->
+    </view>
+
+    <!-- 2.3 已办 -->
+    <view wx:if="{{!cond_db_yb}}" id="yb">
+      <!-- 已办提示 -->
+      <view class="guide">
+        <text>点击可移回"待办"</text>
+      </view>
+      <!-- 已办列表 -->
+      <view class="list" wx:for="{{array_yb}}" wx:key="key" id="{{index}}" bindtap="clk_yb2db">
+        {{item}}
+      </view>
+      <!-- 清空已办按钮 -->
+      <view class="btn">
+        <button bindtap="clk_clrYb" type="warn" disabled="{{array_yb.length==0}}">
+          清空"已办"
+        </button>
+      </view>
+    </view>
+  </view>
+  <!-- end of body -->
+</view>

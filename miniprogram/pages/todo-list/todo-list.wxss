@@ -1,0 +1,74 @@
+/* miniprogram/pages/todo-list/todo-list.wxss */
+
+#page {
+  margin: 0rpx 50rpx 50rpx 50rpx;
+  text-align: center;
+}
+
+.btn {
+  margin-top: 20rpx;
+}
+
+.list {
+  font-size: 50rpx;
+  border: 1rpx;
+  border-color: black;
+  border-style: solid;
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+/* 1 导航条 */
+
+#nav {
+  /* flex布局的横向排列 */
+  display: flex;
+  flex-direction: row;
+  font-size: 70rpx;
+}
+
+.nav1 {
+  flex: 1;
+  background-color: white;
+}
+
+.nav2 {
+  flex: 1;
+  background-color: lightgray;
+}
+
+/* 2 下方内容 */
+
+#body {
+  background-color: white;
+}
+
+/* 2.1 待办:提示,列表,输入框 */
+
+.guide {
+  font-size: 40rpx;
+  text-align: center;
+  color: gray;
+}
+
+#db > .list {
+  background-color: #F8F8FF;
+}
+
+#area {
+  margin: 20rpx 0 0 0;
+  padding-top: 10rpx;
+  min-height: 70rpx;
+  background-color: lightgray;
+  font-size: 50rpx;
+}
+
+#area > textarea {
+  text-align: center;
+}
+
+/* 2.3 已办列表 */
+
+#yb > .list {
+  background-color: #F5F5F5;
+}

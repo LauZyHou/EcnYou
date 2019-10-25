@@ -1,0 +1,9 @@
+/* miniprogram/pages/academic-report/academic-report.wxss */
+
+/*点击选择日期*/
+.select_date {
+  text-align: center;
+  font-size: 12px;
+  color: blueviolet;
+}
+

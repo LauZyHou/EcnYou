@@ -1,0 +1,13 @@
+dist/
+node_modules/
+.DS_Store
+
+# 防止暴露AppID
+project.config.json
+
+temp-cloud-callback-config.json
+
+*.png
+*.jpg
+*.jpeg
+*.gif
