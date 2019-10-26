@@ -1,0 +1,14 @@
+/* miniprogram/pages/settings/notice/notice.wxss */
+
+#page {
+  width: 84%;
+  padding: 2%;
+  margin: 0 auto;
+}
+
+#page > view input {
+  margin: 30rpx 0 30rpx 0;
+  background-color: white;
+  font-size: 50rpx;
+  height: 60rpx;
+}

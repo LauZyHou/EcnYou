@@ -9,7 +9,7 @@
     <!-- 选框 -->
     <checkbox-group bindchange="checkboxChange">
       <view class="list" wx:for="{{array_origin}}" wx:key="key" id="{{index}}">
-        <checkbox value="{{item.value}}" checked="{{item.checked}}">
+        <checkbox value="{{item.value}}" checked="{{item.checked}}" disabled="{{item.disable}}">
           <text>{{item.name}}</text>
         </checkbox>
       </view>
@@ -17,5 +17,5 @@
   </view>
   <!-- 3 尾部按钮等 -->
   <button bindtap="clk_updateDataOrigin" type="primary">保存</button>
-  <view id="foot-guide">如以上数据源有变动，或有未收录的源，请联系。</view>
+  <view id="foot-guide">如发现数据源失效，或有未收录的源，请联系。</view>
 </view>

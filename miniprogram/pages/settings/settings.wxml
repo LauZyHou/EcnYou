@@ -7,8 +7,8 @@
   </view>
 
   <view class="uploader">
-    <navigator url="../academic-report/academic-report" open-type="navigate" class="uploader-text">
-      <view class="iconfont icon-tixing" space="nbsp"> 提醒设置</view>
+    <navigator url="./notice/notice" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-tixing" space="nbsp"> 通知设置</view>
     </navigator>
   </view>
 
