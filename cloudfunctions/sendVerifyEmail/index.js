@@ -1,7 +1,16 @@
 // 云函数入口文件
-const cloud = require('wx-server-sdk')
+const cloud = require('wx-server-sdk');
 
-cloud.init()
+var p = 'ABCDEFGHKMNPQRSTUVWXYZ1234567890';
+
+var TIME_DIFF = 40;
+
+cloud.init({
+  env: cloud.DYNAMIC_CURRENT_ENV
+});
+
+//------------------------------------------------------
+
 
 // 云函数入口函数
 exports.main = async(event, context) => {
@@ -9,18 +18,73 @@ exports.main = async(event, context) => {
   const wxContext = cloud.getWXContext();
   let user_openid = wxContext.OPENID;
 
-  //获取用户发送来的邮件
+  //获取用户发提交的邮件地址
   let email = event.email;
 
-  //todo 检查codes集合,<openid,code,时间>,当前时间-时间>10s,如果太短了,返回时间太短
+  //当前请求的秒级时间戳
+  let now_time = Date.parse(new Date()) / 1000;
 
-  //todo 随机生成code
+  //step-0 随机生成四位code,存在变量nonce里
+  let nonce = '';
+  for (var i = 0; i < 4; i++) { // 生成4个字符
+    nonce += p.charAt(Math.random() * p.length | 0);
+  }
 
-  //todo 更新code集合<openid,code,当前时间>
+  //step-1 检查,并将nonce,add_time添加到codes集合
+  const db = cloud.database();
+  let nums = await db.collection('codes').where({
+    _openid: user_openid
+  }).count();
+  //没有,说明是第一次访问,那么只要将随机生成的code,当前时间,email地址写入
+  if (nums.total == 0) {
+    await db.collection('codes').add({
+      data: {
+        _openid: user_openid,
+        code: nonce,
+        add_time: now_time,
+        email: email
+      }
+    });
+  }
+  //有,说明不是第一次访问,要检查当前时间-上次添加的时间>=TIME_DIFF
+  else {
+    let item = await db.collection('codes').where({
+      _openid: user_openid
+    }).get();
+    let real_diff = now_time - item.data[0].add_time;
+    if (real_diff < TIME_DIFF) { //时间未达标
+      return {
+        icon: 'none',
+        msg: "再等" + String(TIME_DIFF - real_diff) + "秒!"
+      }
+    } else { //时间达标,重设code,当前时间,email地址
+      await db.collection('codes').update({
+        data: {
+          code: nonce,
+          add_time: now_time,
+          email: email
+        }
+      })
+    }
+  }
 
-  //todo 向event.email发送邮件,内容是code
+  //step-2 向event.email发送邮件,以将验证码提供给用户
+
+  //调用云函数发送邮件
+  await cloud.callFunction({
+    name: 'sendEmail2',
+    data: {
+      subject: "【EcnYou】邮箱验证",
+      to: email,
+      html: "你的验证码是[" + nonce + "]，提交以完成邮箱绑定。<br>为了保证后续能收到EcnYou的推送邮件，请将此邮箱加入到你的通讯录中。"
+    },
+    success(res) {},
+    fail(res) {}
+  });
 
   return {
-    msg: "收" + email
+    icon: 'success',
+    msg: "邮件已发送"
   }
+
 }

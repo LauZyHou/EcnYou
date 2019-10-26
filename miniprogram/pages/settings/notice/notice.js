@@ -71,6 +71,15 @@ Page({
 
   // [点击]发送电子邮件
   clk_send: function(e) {
+    //检查邮件格式
+    var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if(!reg.test(this.data.email)) {
+      wx.showToast({
+        icon: 'none',
+        title: "格式错误"
+      });
+      return ;
+    }
     //调用云函数发送邮件
     wx.cloud.callFunction({
       name: 'sendVerifyEmail',
@@ -78,19 +87,21 @@ Page({
         email: this.data.email
       },
       success: res => {
-        //todo 区分是不是太频繁(恶意调用)
+        //将传回的成功/失败信息显示
         wx.showToast({
-          title: res.result.msg
+          icon: res.result.icon, //图标格式也从云端传来,因为可能因为等待时间不足被禁止
+          title: res.result.msg //直接输出提示信息
         });
       },
       fail: err => {
         wx.showToast({
           icon: 'none',
-          title: "sendVerifyEmail出错！请反馈"
+          title: "出错!请反馈"
         });
         console.error(err);
       }
     });
+    //todo 按钮变成待定状态
   },
 
   // [点击]发送验证码
@@ -110,7 +121,7 @@ Page({
       fail: err => {
         wx.showToast({
           icon: 'none',
-          title: "sendVerifyCode出错！请反馈"
+          title: "出错!请反馈"
         });
         console.error(err);
       }
