@@ -6,7 +6,7 @@
   margin: 0 auto;
 }
 
-#page > view input {
+#page > view > input {
   margin: 30rpx 0 30rpx 0;
   background-color: white;
   font-size: 50rpx;

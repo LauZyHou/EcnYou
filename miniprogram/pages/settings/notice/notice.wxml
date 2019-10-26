@@ -2,18 +2,14 @@
 <view id="page">
   <view wx:if="{{verify}}">
     <text>你还未绑定通知邮箱</text>
-    <form>
-      <input type="text" placeholder="邮箱地址"></input>
-      <button type="primary" bindtap="clk_send">发送验证邮件</button>
-    </form>
-    <form>
-      <input type="number" placeholder="验证码"></input>
-      <button type="primary" bindtap="clk_verify">提交验证码</button>
-    </form>
+    <input type="text" placeholder="邮箱地址" value="{{email}}" bindinput="bind_email"></input>
+    <button type="primary" bindtap="clk_send">发送验证邮件</button>
+    <input type="text" placeholder="验证码" value="{{code}}" bindinput="bind_code"></input>
+    <button type="primary" bindtap="clk_verify">提交验证码</button>
   </view>
   <view wx:else>
     <text>下面是你接受通知的邮箱</text>
-    <input type="text" placeholder="邮箱地址" disabled></input>
+    <input type="text" placeholder="邮箱地址" value="{{email}}" disabled></input>
     <button type="warn" bindtap="relieve">解除绑定</button>
   </view>
 </view>
