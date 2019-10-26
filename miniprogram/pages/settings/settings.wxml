@@ -1,0 +1,15 @@
+<!--miniprogram/pages/settings/settings.wxml-->
+<view class="container">
+  <view class="uploader">
+    <navigator url="./data-origin/data-origin" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-shujuyuan" space="nbsp"> 数据源设置</view>
+    </navigator>
+  </view>
+
+  <view class="uploader">
+    <navigator url="../academic-report/academic-report" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-tixing" space="nbsp"> 提醒设置</view>
+    </navigator>
+  </view>
+
+</view>

@@ -1,0 +1,27 @@
+/* miniprogram/pages/settings/data-origin/data-origin.wxss */
+
+#page {
+  width: 84%;
+  padding: 2%;
+  margin: 0 auto;
+  background-color: white;
+}
+
+#nav {
+  font-size: 40rpx;
+  text-align: center;
+  color: gray;
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.list {
+  margin-top: 10rpx;
+  margin-bottom: 10rpx;
+}
+
+#foot-guide {
+  font-size: 30rpx;
+  text-align: center;
+  color: gray;
+}

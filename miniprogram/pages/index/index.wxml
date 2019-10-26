@@ -1,22 +1,41 @@
 <!--index.wxml-->
 <view class="container">
 
-  <!-- 学术报告 -->
-  <!-- <view class="uploader">
+
+  <view class="uploader">
     <navigator url="../academic-report/academic-report" open-type="navigate" class="uploader-text">
-      <text>学术报告</text>
+      <view class="iconfont icon-xueshubaogao" space="nbsp"> bg</view>
     </navigator>
-  </view> -->
+  </view>
+
+  <view class="uploader">
+    <navigator url="" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-biaobai" space="nbsp"> bb</view>
+    </navigator>
+  </view>
+
+  <view class="uploader">
+    <navigator url="" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-shudong" space="nbsp"> sd</view>
+    </navigator>
+  </view>
 
   <view class="uploader">
     <navigator url="../todo-list/todo-list" open-type="navigate" class="uploader-text">
-      <text>记事本</text>
+      <view class="iconfont icon-renwu" space="nbsp"> 计划任务</view>
+    </navigator>
+  </view>
+
+  <view class="uploader">
+    <navigator url="../settings/settings" open-type="navigate" class="uploader-text">
+      <view class="iconfont icon-shezhi" space="nbsp"> 设置</view>
     </navigator>
   </view>
 
   <!-- 客服按钮 -->
   <view class="foot">
-    联系<contact-button size="18"></contact-button>客服
+    联系后台
+    <contact-button size="18"></contact-button>
   </view>
 
 

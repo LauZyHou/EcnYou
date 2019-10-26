@@ -1,23 +1,25 @@
 /**app.wxss**/
+
+@import "./style/ali_icon.wxss";
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-} 
+}
 
 button {
   background: initial;
 }
 
-button:focus{
+button:focus {
   outline: 0;
 }
 
-button::after{
+button::after {
   border: none;
 }
-
 
 page {
   background: #f6f6f6;

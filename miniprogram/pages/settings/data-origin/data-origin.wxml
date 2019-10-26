@@ -1,0 +1,21 @@
+<!--miniprogram/pages/settings/data-origin/data-origin.wxml-->
+<view id="page">
+  <!-- 1 顶部提示 -->
+  <view id="nav">
+    <text>勾选需要的数据源，并保存</text>
+  </view>
+  <!-- 2 主体部分 -->
+  <view id="body">
+    <!-- 选框 -->
+    <checkbox-group bindchange="checkboxChange">
+      <view class="list" wx:for="{{array_origin}}" wx:key="key" id="{{index}}">
+        <checkbox value="{{item.value}}" checked="{{item.checked}}">
+          <text>{{item.name}}</text>
+        </checkbox>
+      </view>
+    </checkbox-group>
+  </view>
+  <!-- 3 尾部按钮等 -->
+  <button bindtap="clk_updateDataOrigin" type="primary">保存</button>
+  <view id="foot-guide">如以上数据源有变动，或有未收录的源，请联系。</view>
+</view>

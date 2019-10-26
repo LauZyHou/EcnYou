@@ -11,3 +11,5 @@ temp-cloud-callback-config.json
 *.jpg
 *.jpeg
 *.gif
+
+miniprogram/style/ali_icon.wxss

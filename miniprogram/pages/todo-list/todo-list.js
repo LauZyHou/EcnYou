@@ -56,11 +56,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function() {
-    //本地数据缓存
-    wx.setStorage({
-      key: 'db_and_yb',
-      data: [this.data.array_db, this.data.array_yb],
-    })
+    this._stodata();
   },
 
   /**
@@ -83,6 +79,19 @@ Page({
   onShareAppMessage: function() {
 
   },
+
+  //----------------------------------------------------------
+
+  //本地数据缓存
+  _stodata: function() {
+    // console.log([this.data.array_db, this.data.array_yb]);
+    wx.setStorage({
+      key: 'db_and_yb',
+      data: [this.data.array_db, this.data.array_yb],
+    });
+  },
+
+  //----------------------------------------------------------
 
   // [点击]待办
   clk_navDB: function(e) {
@@ -115,7 +124,8 @@ Page({
     this.setData({
       array_db: db,
       array_yb: yb
-    })
+    });
+    this._stodata();
   },
 
   // 将某一事项从已办移动到待办
@@ -129,7 +139,8 @@ Page({
     this.setData({
       array_db: db,
       array_yb: yb
-    })
+    });
+    this._stodata();
   },
 
   // [点击]"添加新事项",要将输入框呼出
@@ -159,6 +170,7 @@ Page({
       array_db: db,
       cond_btn_area: true
     });
+    this._stodata();
   },
 
   // [点击]清空待办
@@ -179,9 +191,9 @@ Page({
           that.setData({
             array_yb: []
           });
+          that._stodata();
         } else if (res.cancel) {}
       }
     });
-  }
-
+  },
 });
