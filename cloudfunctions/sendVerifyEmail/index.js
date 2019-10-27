@@ -17,6 +17,21 @@ exports.main = async(event, context) => {
   //获取调用此函数的用户的openID
   const wxContext = cloud.getWXContext();
   let user_openid = wxContext.OPENID;
+  //数据库
+  const db = cloud.database();
+
+  //如果用户已经绑定过了,提示
+  let item_user = await db.collection('users').where({
+    _openid: user_openid
+  }).get();
+  if (item_user.data.length > 0) { //存在用户
+    let old_email = item_user.data[0].email;
+    if (old_email != null && old_email.length > 0) //且邮箱不是null或"",这里约定""是用户解绑了
+      return {
+        icon: 'none',
+        msg: "你已经绑定过了"
+      }
+  }
 
   //获取用户发提交的邮件地址
   let email = event.email;
@@ -31,7 +46,6 @@ exports.main = async(event, context) => {
   }
 
   //step-1 检查,并将nonce,add_time添加到codes集合
-  const db = cloud.database();
   let nums = await db.collection('codes').where({
     _openid: user_openid
   }).count();
@@ -42,7 +56,8 @@ exports.main = async(event, context) => {
         _openid: user_openid,
         code: nonce,
         add_time: now_time,
-        email: email
+        email: email,
+        try_num: 0 //尝试次数,用于防止尝试验证码
       }
     });
   }
@@ -62,7 +77,8 @@ exports.main = async(event, context) => {
         data: {
           code: nonce,
           add_time: now_time,
-          email: email
+          email: email,
+          try_num: 0 //不必判断上次是否也是这个邮箱,因为验证码已经改变
         }
       })
     }
@@ -76,7 +92,7 @@ exports.main = async(event, context) => {
     data: {
       subject: "【EcnYou】邮箱验证",
       to: email,
-      html: "你的验证码是[" + nonce + "]，提交以完成邮箱绑定。<br>为了保证后续能收到EcnYou的推送邮件，请将此邮箱加入到你的通讯录中。"
+      html: "你的验证码是[" + nonce + "]，提交以完成邮箱绑定。<br><br>为了保证后续能收到EcnYou的推送邮件，请将本邮箱加入到你的通讯录中。"
     },
     success(res) {},
     fail(res) {}

@@ -73,12 +73,12 @@ Page({
   clk_send: function(e) {
     //检查邮件格式
     var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-    if(!reg.test(this.data.email)) {
+    if (!reg.test(this.data.email)) {
       wx.showToast({
         icon: 'none',
         title: "格式错误"
       });
-      return ;
+      return;
     }
     //调用云函数发送邮件
     wx.cloud.callFunction({
@@ -115,6 +115,7 @@ Page({
       success: res => {
         //todo 区分是否不接受,这里不是出错
         wx.showToast({
+          icon: res.result.icon,
           title: res.result.msg
         });
       },
