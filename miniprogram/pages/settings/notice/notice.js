@@ -1,12 +1,14 @@
 // miniprogram/pages/settings/notice/notice.js
 
+const app = getApp();
+
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    verify: true,
+    verify: 0, //0等待,1显示验证页,2显示解绑页
     email: null,
     code: null
   },
@@ -15,7 +17,37 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    //获取email
+    if (!app.globalData.openid) {
+      console.error("没有openid!");
+      return;
+    }
+    //如果用户已经绑定过了,设置verify为false
+    const db = wx.cloud.database();
+
+    //注意不在anync里不能用await,这里也不能直接把结果赋值,要用success回调
+    db.collection('users').where({
+      _openid: app.globalData.openid
+    }).get({
+      success: res => {
+        if (res.data.length > 0) { //存在用户
+          let old_email = res.data[0].email;
+          // console.log(old_email);
+          //且邮箱不是null或"",这里约定""是用户解绑了
+          if (old_email != null && old_email.length > 0) {
+            this.setData({
+              verify: 2,
+              email: old_email
+            });
+            return; //!
+          }
+          // console.log(this.data.verify);//false
+        }
+        //不存在用户,或存在用户但邮箱没绑定
+        this.setData({
+          verify: 1
+        });
+      }
+    });
   },
 
   /**
@@ -113,7 +145,13 @@ Page({
         code: this.data.code
       },
       success: res => {
-        //todo 区分是否不接受,这里不是出错
+        //区分是否接受(这里不是出错),接受后设置为已绑定页面
+        if (res.result.icon == 'success') {
+          this.setData({
+            verify: 2,
+            email: res.result.email
+          });
+        }
         wx.showToast({
           icon: res.result.icon,
           title: res.result.msg
@@ -125,6 +163,48 @@ Page({
           title: "出错!请反馈"
         });
         console.error(err);
+      }
+    });
+  },
+
+  //[点击]解除绑定
+  relieve: function(e) {
+    let that = this;
+
+    wx.showModal({
+      title: '注意',
+      content: '确定要解除邮箱绑定吗？',
+      success: function(res) {
+        if (res.confirm) {
+          wx.cloud.callFunction({ //调用云函数解绑定
+            name: 'breakBinding',
+            data: {},
+            success: res => {
+              if (res.result.ok == true) { //解除绑定成功
+                wx.showToast({
+                  icon: 'success',
+                  title: "成功解绑!"
+                });
+                that.setData({
+                  verify: 1,
+                  email: ''
+                });
+              } else {
+                wx.showToast({
+                  icon: 'none',
+                  title: "update出错"
+                });
+              }
+            },
+            fail: err => {
+              wx.showToast({
+                icon: 'none',
+                title: '云函数调用出错'
+              });
+              console.error(err);
+            }
+          })
+        } else if (res.cancel) {}
       }
     });
   },

@@ -14,7 +14,13 @@ App({
         traceUser: true,
       })
     }
-
-    this.globalData = {}
+    //调用登录,获取AppId,OpenId等
+    wx.cloud.callFunction({
+      name: 'login',
+      data: {},
+      success: res => {
+        this.globalData = res.result
+      }
+    });
   }
 })
