@@ -8,7 +8,7 @@
 
   <view class="uploader">
     <navigator url="./notice/notice" open-type="navigate" class="uploader-text">
-      <view class="iconfont icon-tixing" space="nbsp"> 通知设置</view>
+      <view class="iconfont icon-tixing" space="nbsp"> 邮件设置</view>
     </navigator>
   </view>
 

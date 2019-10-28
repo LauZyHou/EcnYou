@@ -25,3 +25,14 @@
   text-align: center;
   color: gray;
 }
+
+/* #fx {
+  text-align: center;
+  background-color: lightgray;
+  font-size: 50rpx;
+} */
+
+#fx {
+  background-color: lightgray;
+  margin-top: 10rpx;
+}

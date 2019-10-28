@@ -33,9 +33,11 @@ exports.main = async(event, context) => {
   let num1 = 0;
   let num2 = 0;
   let svs = event.selectedValue;
+  let idx;
+  console.log(svs);
   for (let i = 0; i < svs.length; i++) {
     //查找元素下标,更新数字
-    let idx = dy1.getArrayIndex(svs[i]);
+    idx = dy1.getArrayIndex(svs[i]);
     if (idx >= 0)
       num1 |= 1 << idx;
     idx = dy2.getArrayIndex(svs[i]);

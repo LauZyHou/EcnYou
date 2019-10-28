@@ -4,21 +4,21 @@
 
   <view class="uploader">
     <navigator url="../academic-report/academic-report" open-type="navigate" class="uploader-text">
-      <view class="iconfont icon-xueshubaogao" space="nbsp"> bg</view>
+      <view class="iconfont icon-xueshubaogao" space="nbsp"> 学术报告</view>
     </navigator>
   </view>
 
-  <view class="uploader">
+  <!-- <view class="uploader">
     <navigator url="" open-type="navigate" class="uploader-text">
       <view class="iconfont icon-biaobai" space="nbsp"> bb</view>
     </navigator>
-  </view>
+  </view> -->
 
-  <view class="uploader">
+  <!-- <view class="uploader">
     <navigator url="" open-type="navigate" class="uploader-text">
       <view class="iconfont icon-shudong" space="nbsp"> sd</view>
     </navigator>
-  </view>
+  </view> -->
 
   <view class="uploader">
     <navigator url="../todo-list/todo-list" open-type="navigate" class="uploader-text">

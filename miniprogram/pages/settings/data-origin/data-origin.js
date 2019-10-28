@@ -1,6 +1,6 @@
 // miniprogram/pages/settings/data-origin/data-origin.js
 
-var selectedValue = null;
+var selectedValue = [];
 
 Page({
 
@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    loaded: false,
     array_origin: [{
         name: '软件工程学院',
         value: 'sei',
@@ -21,42 +22,42 @@ Page({
       {
         name: '教育学部',
         value: 'ed',
-        checked: false
+        checked: true
       },
       {
         name: '教育学系',
         value: 'dedu',
-        checked: false
+        checked: true
       },
       {
         name: '课程与教学系',
         value: 'kcx',
-        checked: false
+        checked: true
       },
       {
         name: '职业教育与成人教育研究所',
         value: 'vae',
-        checked: false
+        checked: true
       },
       {
         name: '国家教育宏观政策研究院',
         value: 'niepr',
-        checked: false
+        checked: true
       },
       {
         name: '教师教育学院',
         value: 'cte',
-        checked: false
+        checked: true
       },
       {
         name: '终身教育学院',
         value: 'smile',
-        checked: false
+        checked: true
       },
       {
         name: '教育高等研究院',
         value: 'iase',
-        checked: false
+        checked: true
       },
       {
         name: '数据科学与工程学院',
@@ -66,162 +67,162 @@ Page({
       {
         name: '地球科学学部',
         value: 'dxb',
-        checked: false
+        checked: true
       },
       {
         name: '地理科学学院',
         value: 'geo',
-        checked: false
+        checked: true
       },
       {
         name: '生态与环境科学学院',
         value: 'sees',
-        checked: false
+        checked: true
       },
       {
         name: '城市与区域科学学院',
         value: 'urban',
-        checked: false
+        checked: true
       },
       {
         name: '河口海岸学国家重点实验室',
         value: 'sklec',
-        checked: false
+        checked: true
       },
       {
         name: '经济与管理学部',
         value: 'fem',
-        checked: false
+        checked: true
       },
       {
         name: '统计学院',
         value: 'stat',
-        checked: false
+        checked: true
       },
       {
         name: '亚欧商学院',
         value: 'aebs',
-        checked: false
+        checked: true
       },
       {
         name: '中国语言文学系',
         value: 'zhwx',
-        checked: false
+        checked: true
       },
       {
         name: '历史学系',
         value: 'history',
-        checked: false
+        checked: true
       },
       {
         name: '哲学系',
         value: 'philo',
-        checked: false
+        checked: true
       },
       {
         name: '政治学系',
         value: 'dp',
-        checked: false
+        checked: true
       },
       {
         name: '马克思主义学院',
         value: 'mks',
-        checked: false
+        checked: true
       },
       {
         name: '法学院',
         value: 'law',
-        checked: false
+        checked: true
       },
       {
         name: '社会发展学院',
         value: 'soci',
-        checked: false
+        checked: true
       },
       {
         name: '外语学院',
         value: 'fl',
-        checked: false
+        checked: true
       },
       {
         name: '心理与认知科学学院',
         value: 'psy',
-        checked: false
+        checked: true
       },
       {
         name: '传播学院',
         value: 'comm',
-        checked: false
+        checked: true
       },
       {
         name: '音乐学院',
         value: 'music',
-        checked: false
+        checked: true
       },
       {
         name: '数学科学学院',
         value: 'math',
-        checked: false
+        checked: true
       },
       {
         name: '物理与电子科学学院',
         value: 'phy',
-        checked: false
+        checked: true
       },
       {
         name: '精密光谱科学与技术国家重点实验室',
         value: 'lps',
-        checked: false
+        checked: true
       },
       {
         name: '极化材料与器件教育部重点实验室',
         value: 'clmp',
-        checked: false
+        checked: true
       },
       {
         name: '化学与分子工程学院',
         value: 'chem',
-        checked: false
+        checked: true
       },
       {
         name: '上海市绿色化学与化工过程绿色化重点实验室',
         value: 'gccp',
-        checked: false
+        checked: true
       },
       {
         name: '生命科学学院',
         value: 'life',
-        checked: false
+        checked: true
       },
       {
         name: '生命医学研究所(上海市调控生物学重点实验室)',
         value: 'biomed',
-        checked: false
+        checked: true
       },
       {
         name: '脑功能基因组学教育部重点实验室',
         value: 'sbg',
-        checked: false
+        checked: true
       },
       {
         name: '思勉人文高等研究院',
         value: 'si-mian',
-        checked: false
+        checked: true
       },
       {
         name: '城市发展研究院',
         value: 'iud',
-        checked: false
+        checked: true
       },
       {
         name: '经管书院',
         value: 'cem',
-        checked: false
+        checked: true
       },
       {
         name: '大夏书院',
         value: 'dx',
-        checked: false
+        checked: true
       }
     ]
   },
@@ -230,7 +231,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-
+    //获取到订阅数据,写入checked中
+    wx.cloud.callFunction({
+      name: 'getDataOrigin',
+      data: {},
+      success: res => {
+        //将订阅数组转为Set,然后对每个array_origin中的项判断在不在其中,设置checked
+        let dys = new Set(res.result);
+        let aos = this.data.array_origin;
+        for (let i = 0; i < aos.length; i++) {
+          if (dys.has(aos[i]['value'])) {
+            aos[i]['checked'] = true;
+            // console.log(aos[i]);
+          } else
+            aos[i]['checked'] = false;
+        }
+        this.setData({
+          array_origin: aos,
+          loaded: true
+        }); //这里不能和最后的setData合到一起,即使把上方的let定义拿出call也无法更新
+      },
+      fail: err => {
+        console.error(err);
+      }
+    });
+    // this.setData({
+    //   loaded: true
+    // });
   },
 
   /**
@@ -316,6 +343,21 @@ Page({
         });
         console.error(err);
       }
+    });
+  },
+
+  //[点击]反选
+  clk_fx: function(e) {
+    selectedValue = [];
+    let aos = this.data.array_origin;
+    for (let i = 0; i < aos.length; i++) {
+      aos[i]['checked'] = !aos[i]['checked'];
+      if (aos[i]['checked'] == true) {
+        selectedValue.push(aos[i]['value']);
+      }
+    }
+    this.setData({
+      array_origin: aos,
     });
   }
 })

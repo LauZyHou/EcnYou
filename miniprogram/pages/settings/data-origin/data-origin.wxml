@@ -1,9 +1,12 @@
 <!--miniprogram/pages/settings/data-origin/data-origin.wxml-->
-<view id="page">
+<view id="page" wx:if="{{loaded==true}}">
   <!-- 1 顶部提示 -->
   <view id="nav">
     <text>勾选需要的数据源，并保存</text>
   </view>
+  <!-- <view id="fx" bindtap="clk_fx">
+    <text>反选</text>
+  </view> -->
   <!-- 2 主体部分 -->
   <view id="body">
     <!-- 选框 -->
@@ -17,5 +20,6 @@
   </view>
   <!-- 3 尾部按钮等 -->
   <button bindtap="clk_updateDataOrigin" type="primary">保存</button>
+  <button id="fx" bindtap="clk_fx" type="default">反选</button>
   <view id="foot-guide">如发现数据源失效，或有未收录的源，请联系。</view>
 </view>
