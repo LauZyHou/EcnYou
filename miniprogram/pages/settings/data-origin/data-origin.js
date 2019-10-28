@@ -1,4 +1,7 @@
 // miniprogram/pages/settings/data-origin/data-origin.js
+
+var selectedValue = null;
+
 Page({
 
   /**
@@ -280,8 +283,39 @@ Page({
   },
 
 
-
+  //选框变化时,在全局变量更新选中的那些数值
   checkboxChange: function(e) {
-    //todo
+    // console.log(e.detail.value);
+    selectedValue = e.detail.value;
+  },
+
+  //[点击]保存,上传所选内容
+  clk_updateDataOrigin: function(e) {
+    wx.cloud.callFunction({
+      name: 'setDataOrigin',
+      data: {
+        selectedValue: selectedValue
+      },
+      success: res => {
+        if (res.result.ok == true) { //保存成功
+          wx.showToast({
+            icon: 'success',
+            title: "保存成功!"
+          });
+        } else {
+          wx.showToast({
+            icon: 'none',
+            title: "出错!请反馈"
+          });
+        }
+      },
+      fail: err => {
+        wx.showToast({
+          icon: 'none',
+          title: '云函数调用出错'
+        });
+        console.error(err);
+      }
+    });
   }
 })

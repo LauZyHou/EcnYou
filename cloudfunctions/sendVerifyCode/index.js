@@ -4,10 +4,9 @@ const cloud = require('wx-server-sdk');
 var MAX_TRY = 3;
 var p = 'ABCDEFGHKMNPQRSTUVWXYZ1234567890';
 
-cloud.init()
+cloud.init();
 
 //todo 设置过期时间
-//todo 设置尝试次数
 
 // 云函数入口函数
 exports.main = async(event, context) => {
