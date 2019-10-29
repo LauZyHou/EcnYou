@@ -348,14 +348,24 @@ Page({
 
   //[点击]反选
   clk_fx: function(e) {
-    selectedValue = [];
+    let oldSelectedValue = new Set(selectedValue); //旧的选中项转为集合
+    let newSelectedValue = new Set(); //反选后的选中项
     let aos = this.data.array_origin;
     for (let i = 0; i < aos.length; i++) {
-      aos[i]['checked'] = !aos[i]['checked'];
-      if (aos[i]['checked'] == true) {
-        selectedValue.push(aos[i]['value']);
+      // aos[i]['checked'] = !aos[i]['checked'];
+      // if (aos[i]['checked'] == true) {
+      //   selectedValue.push(aos[i]['value']);
+      // }
+      //[bugfix]反选无法反选未保存的选项
+      if (oldSelectedValue.has(aos[i]['value'])) { //如果之前是选中项
+        aos[i]['checked'] = false; //将其选中状态设置为false
+      } else { //如果之前是未选中项
+        aos[i]['checked'] = true; //将其选中状态设置为true
+        newSelectedValue.add(aos[i]['value']); //添加到新的选中项
       }
     }
+    //更新全局选中数据和页面绑定数据
+    selectedValue = Array.from(newSelectedValue);
     this.setData({
       array_origin: aos,
     });
