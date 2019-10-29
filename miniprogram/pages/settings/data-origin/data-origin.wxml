@@ -21,5 +21,5 @@
   <!-- 3 尾部按钮等 -->
   <button bindtap="clk_updateDataOrigin" type="primary">保存</button>
   <button id="fx" bindtap="clk_fx" type="default">反选</button>
-  <view id="foot-guide">如发现数据源失效，或有未收录的源，请联系。</view>
+  <view id="foot-guide">绑定邮箱后，你会收到此处勾选的讲座更新信息。</view>
 </view>

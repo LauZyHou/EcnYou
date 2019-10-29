@@ -60,7 +60,7 @@ Page({
         checked: true
       },
       {
-        name: '数据科学与工程学院',
+        name: '数据科学与工程学院(不可用)',
         value: 'dase',
         checked: true
       },
@@ -125,7 +125,7 @@ Page({
         checked: true
       },
       {
-        name: '马克思主义学院',
+        name: '马克思主义学院(不可用)',
         value: 'mks',
         checked: true
       },
@@ -140,7 +140,7 @@ Page({
         checked: true
       },
       {
-        name: '外语学院',
+        name: '外语学院(不可用)',
         value: 'fl',
         checked: true
       },
@@ -155,7 +155,7 @@ Page({
         checked: true
       },
       {
-        name: '音乐学院',
+        name: '音乐学院(不可用)',
         value: 'music',
         checked: true
       },
@@ -180,7 +180,7 @@ Page({
         checked: true
       },
       {
-        name: '化学与分子工程学院',
+        name: '化学与分子工程学院(不可用)',
         value: 'chem',
         checked: true
       },
@@ -215,7 +215,7 @@ Page({
         checked: true
       },
       {
-        name: '经管书院',
+        name: '经管书院(不可用)',
         value: 'cem',
         checked: true
       },
@@ -246,6 +246,9 @@ Page({
           } else
             aos[i]['checked'] = false;
         }
+        //[bugfix]刚进入页面时selectedValue为空
+        selectedValue = res.result;
+        //更新页面上展示的订阅数据,结束加载状态
         this.setData({
           array_origin: aos,
           loaded: true
