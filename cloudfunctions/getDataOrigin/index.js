@@ -3,8 +3,8 @@ const cloud = require('wx-server-sdk')
 
 //从setDataOrigin中复制一份
 //订阅标识,因为整数最多32位,这里每个数组最多长32
-const dy1 = ['sei', 'cs', 'ed', 'dedu', 'kcx', 'vae', 'niepr', 'cte', 'smile', 'iase', 'dase', 'dxb', 'geo', 'sees', 'urban', 'sklec', 'fem', 'stat', 'aebs', 'zhwx', 'history', 'philo', 'dp', 'mks', 'law', 'soci', 'fl', 'psy', 'comm', 'music', 'math', 'phy'];
-const dy2 = ['lps', 'clmp', 'chem', 'gccp', 'life', 'biomed', 'sbg', 'si-mian', 'iud', 'cem', 'dx'];
+const dy1 = ['sei', 'cs', 'ed', 'dedu', 'kcx', 'iase', 'dxb', 'geo', 'sees', 'urban', 'sklec', 'fem', 'stat', 'aebs', 'zhwx', 'history', 'philo', 'dp', 'law', 'soci', 'psy', 'comm', 'math', 'phy', 'lps', 'clmp', 'gccp', 'life', 'biomed', 'sbg', 'si-mian', 'iud'];
+const dy2 = ['dx'];
 
 
 cloud.init();

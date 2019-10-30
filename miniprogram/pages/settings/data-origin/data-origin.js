@@ -35,33 +35,8 @@ Page({
         checked: true
       },
       {
-        name: '职业教育与成人教育研究所',
-        value: 'vae',
-        checked: true
-      },
-      {
-        name: '国家教育宏观政策研究院',
-        value: 'niepr',
-        checked: true
-      },
-      {
-        name: '教师教育学院',
-        value: 'cte',
-        checked: true
-      },
-      {
-        name: '终身教育学院',
-        value: 'smile',
-        checked: true
-      },
-      {
         name: '教育高等研究院',
         value: 'iase',
-        checked: true
-      },
-      {
-        name: '数据科学与工程学院(不可用)',
-        value: 'dase',
         checked: true
       },
       {
@@ -125,11 +100,6 @@ Page({
         checked: true
       },
       {
-        name: '马克思主义学院(不可用)',
-        value: 'mks',
-        checked: true
-      },
-      {
         name: '法学院',
         value: 'law',
         checked: true
@@ -140,11 +110,6 @@ Page({
         checked: true
       },
       {
-        name: '外语学院(不可用)',
-        value: 'fl',
-        checked: true
-      },
-      {
         name: '心理与认知科学学院',
         value: 'psy',
         checked: true
@@ -152,11 +117,6 @@ Page({
       {
         name: '传播学院',
         value: 'comm',
-        checked: true
-      },
-      {
-        name: '音乐学院(不可用)',
-        value: 'music',
         checked: true
       },
       {
@@ -177,11 +137,6 @@ Page({
       {
         name: '极化材料与器件教育部重点实验室',
         value: 'clmp',
-        checked: true
-      },
-      {
-        name: '化学与分子工程学院(不可用)',
-        value: 'chem',
         checked: true
       },
       {
@@ -212,11 +167,6 @@ Page({
       {
         name: '城市发展研究院',
         value: 'iud',
-        checked: true
-      },
-      {
-        name: '经管书院(不可用)',
-        value: 'cem',
         checked: true
       },
       {

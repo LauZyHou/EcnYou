@@ -16,21 +16,21 @@ exports.main = async(event, context) => {
   let user_openid = wxContext.OPENID;
   const db = cloud.database();
 
-  let xyName = "课程与教学系";
-  let xyId = "kcx";
+  let xyName = "亚欧商学院";
+  let xyId = "aebs";
   //学院网站前缀,带'/'符号
-  let xyUrl = "http://www.kcx.ecnu.edu.cn/";
+  let xyUrl = "http://aebs.ecnu.edu.cn/";
   //要爬取的页面的后缀
-  let suffix = "News.aspx?infolb=16&flag=16";
+  let suffix = "7263/list.htm";
   //要爬取标题和href的元素的path
-  let titPath = "#form1 > div.showbox > div > div.ny_title > div.ny_font > table > tbody > tr > td:nth-child(1) > a";
+  let titPath = "#wp_news_w9 > a.column-news-item.clearfix";
   //要爬取时间元素的path,为""时表示没有时间
-  let timePath = "#form1 > div.showbox > div > div.ny_title > div.ny_font > table > tbody > tr > td:nth-child(2)";
+  let timePath = "#wp_news_w9 > a.column-news-item.clearfix > span.column-news-date.news-date-hide";
   //0:在里面
   //1:属性是title
   //2:在里面但还套了个标签(如span,font)
   //3:comm传播学院,专用,在里面(下标1)又套了个标签(下标0)
-  let title_style = 0;
+  let title_style = 2;
 
   //fixme 从数据库获取以上参数
 

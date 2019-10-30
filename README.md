@@ -1,6 +1,6 @@
-# EcnYou_Front
+# EcnYou
 
-EcnYou微信小程序前端，Node.js书写云开发。
+EcnYou微信小程序。
 
 ## 配置
 
