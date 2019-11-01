@@ -21,5 +21,5 @@
   <!-- 3 尾部按钮等 -->
   <button bindtap="clk_updateDataOrigin" type="primary">保存</button>
   <button id="fx" bindtap="clk_fx" type="default">反选</button>
-  <view id="foot-guide">绑定邮箱后，你会收到此处勾选的讲座更新信息。</view>
+  <view id="foot-guide">绑定邮箱，以定期收到此处勾选的讲座更新信息。</view>
 </view>
