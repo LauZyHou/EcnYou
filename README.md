@@ -66,6 +66,8 @@ npm install cheerio
 
 - `getDataOrigin` 获取数据源数字并解析成['sei','cs']的形式
 
+- `mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户
+
 - `refreshReportMsg` 仅用于测试触发器功能的云函数
 
 - `sendEmail2` 向用户发送邮件,传入主题、收件人、内容HTML
