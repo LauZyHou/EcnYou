@@ -1,9 +1,21 @@
 <!--miniprogram/pages/academic-report/academic-report.wxml-->
-<view class="container">
-  <!-- <text>点击选择日期</text> -->
-  <picker mode="date" value="{{date}}" start="2019-10-25" end="2022-11-30" bindchange="bindDateChange">
+<view class="container" wx:if="{{loaded}}">
+  <!-- 1 标题 -->
+  <text id="tit">选择要查看的学院</text>
+  <text id="tit2">因个人小程序禁止链接,请点击复制后在浏览器打开</text>
+  <!-- 2 选择器 -->
+  <picker mode="selector" range="{{xy_names}}" value="{{index}}" bindchange="bindChange">
     <view class="picker">
-      <text class="select_date">点击选择日期：{{date}}</text>
+      <text class="select_xy">
+        {{xy_names[index]}}
+      </text>
     </view>
   </picker>
+  <!-- 3 列表 -->
+  <view bindtap="copyBtn" class="list" wx:for="{{data_list}}" wx:key="key" id="{{index}}">
+    <text>{{item.name}}</text>
+  </view>
+</view>
+<view class="container" wx:else>
+  <text>加载中...</text>
 </view>

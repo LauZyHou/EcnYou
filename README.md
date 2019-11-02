@@ -64,6 +64,10 @@ npm install cheerio
 
 - `crawInNextTable` 爬取数据，写入next集合(见metaData集合)
 
+- `genInNextHTML` 从`nextTable`生成`nextHTML`集合,以让用户能直接获取学术报告信息
+
+- `getAcademy` 获取新表中学院id->[{name:"讲座标题",url:"完整url"},...]的映射信息
+
 - `getDataOrigin` 获取数据源数字并解析成['sei','cs']的形式
 
 - `mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户,并交换新旧表

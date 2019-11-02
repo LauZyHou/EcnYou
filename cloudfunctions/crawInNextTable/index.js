@@ -18,6 +18,7 @@ exports.main = async(event, context) => {
   let aca = await db.collection('academy').get();
   let metadata = await db.collection('metaData').doc('1').get();
   let nextTab = metadata.data.nextTable;
+  // console.log(newTab);
 
   // console.log(aca.data);
   // console.log(nextTab);
@@ -52,6 +53,8 @@ exports.main = async(event, context) => {
     let titles = new Array();
     let hrefs = new Array();
     let times = new Array();
+    //当前时间
+    let nowtime = dateFormat("YYYY-mm-dd HH:MM", new Date());
     //分析文档结构,使用页面上讲座项的公共selector来获取到它们
     //1 标题和href
     $(titPath).each((index, value) => {
@@ -90,13 +93,13 @@ exports.main = async(event, context) => {
     // console.log(times);
     for (let i = 0; i < titles.length; i++) {
       try {
-        await db.collection(nextTab).add({
+        db.collection(nextTab).add({
           data: {
             xyId: xyId,
             title: titles[i],
             href: hrefs[i], //不保存URL前缀,前端读下来再拼上
             publish_time: times[i], //注意这是发布时间,不是报告的时间
-            add_time: dateFormat("YYYY-mm-dd HH:MM", new Date()) //在数据库中添加条目的时间
+            add_time: nowtime //在数据库中添加条目的时间
           }
         });
       } catch (e) {
