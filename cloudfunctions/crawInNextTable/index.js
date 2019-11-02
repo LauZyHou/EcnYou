@@ -18,15 +18,31 @@ exports.main = async(event, context) => {
   let aca = await db.collection('academy').get();
   let metadata = await db.collection('metaData').doc('1').get();
   let nextTab = metadata.data.nextTable;
+  let lastTab = metadata.data.lastTable;
   // console.log(newTab);
 
   // console.log(aca.data);
   // console.log(nextTab);
 
+  //将交换改放到此触发器的最前面,否则查看到的学术报告在更新后仍然是旧的,直到下次更新
+  //交换metaData中的lastTable和nextTable,以在下个周期收到新的邮件
+  await db.collection('metaData').doc('1').update({
+    data: {
+      lastTable: nextTab,
+      nextTable: lastTab
+    }
+  });
+  //在变量里也要做交换,主要是此触发器需要使用当前正确的nextTable名
+  let t = nextTab;
+  nextTab = lastTab;
+  lastTab = t;
+
   //删除next表中所有内容
+  /*
   await db.collection(nextTab).where({
     _id: _.neq(0)
   }).remove();
+  */
 
   //遍历每个数据源,爬取信息写入next表
   for (let i = 0; i < aca.data.length; i++) {
@@ -93,13 +109,21 @@ exports.main = async(event, context) => {
     // console.log(times);
     for (let i = 0; i < titles.length; i++) {
       try {
-        db.collection(nextTab).add({
-          data: {
-            xyId: xyId,
-            title: titles[i],
-            href: hrefs[i], //不保存URL前缀,前端读下来再拼上
-            publish_time: times[i], //注意这是发布时间,不是报告的时间
-            add_time: nowtime //在数据库中添加条目的时间
+        //只更新没有的记录,防止过多次写入数据库导致超时
+        db.collection(nextTab).where({
+          xyId: xyId,
+          href: hrefs[i],
+        }).count().then(res => {
+          if (res.total == 0) {
+            db.collection(nextTab).add({
+              data: {
+                xyId: xyId,
+                title: titles[i],
+                href: hrefs[i], //不保存URL前缀,前端读下来再拼上
+                publish_time: times[i], //注意这是发布时间,不是报告的时间
+                add_time: nowtime //在数据库中添加条目的时间
+              }
+            });
           }
         });
       } catch (e) {

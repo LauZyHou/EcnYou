@@ -56,7 +56,7 @@ npm install cheerio
 
 #### 云函数/触发器
 
-在微信开发者工具中右键上传即可。
+在微信开发者工具中右键上传即可。另外在云开发中设置各个云函数的超时时间，批量发邮件和爬取信息需要较长时间，最多可以设置20秒。
 
 ## 云函数/触发器简要说明
 
@@ -64,13 +64,15 @@ npm install cheerio
 
 - `crawInNextTable` 爬取数据，写入next集合(见metaData集合)
 
+- `diffTrigger` 从新旧集合生成每个学院的更新HTML,写入diffMsg集合并返回
+
 - `genInNextHTML` 从`nextTable`生成`nextHTML`集合,以让用户能直接获取学术报告信息
 
 - `getAcademy` 获取新表中学院id->[{name:"讲座标题",url:"完整url"},...]的映射信息
 
 - `getDataOrigin` 获取数据源数字并解析成['sei','cs']的形式
 
-- `mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户,并交换新旧表
+- [作废]`mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户,并交换新旧表
 
 - `refreshReportMsg` 仅用于测试触发器功能的云函数
 

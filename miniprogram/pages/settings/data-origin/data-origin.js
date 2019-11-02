@@ -136,7 +136,7 @@ Page({
       },
       {
         name: '极化材料与器件教育部重点实验室',
-        value: 'clmp',
+        value: 'clpm',
         checked: true
       },
       {

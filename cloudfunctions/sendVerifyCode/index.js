@@ -86,7 +86,9 @@ exports.main = async(event, context) => {
     await db.collection('users').add({
       data: {
         "_openid": user_openid,
-        "email": record.email
+        "email": record.email,
+        "dy1": 0,
+        "dy2": 0
       }
     });
   } else { //老用户,更新
