@@ -72,7 +72,26 @@ exports.main = async(event, context) => {
   }
   // console.log(htmls);
 
-  //todo 保存报表
+  //保存报表(同步删除,异步添加)
+  //删除全部
+  await db.collection('diffMsg').where({
+    _id: _.neq(0)
+  }).remove();
+  //添加一条时间记录,以在没有新讲座时仍知道此触发器触发了
+  await db.collection('diffMsg').add({
+    data: {
+      add_time: dateFormat("YYYY-mm-dd HH:MM", new Date())
+    }
+  });
+  //添加若干的新讲座记录
+  for (let xy of useOriginSet) {
+    await db.collection('diffMsg').add({
+      data: {
+        xyId: xy,
+        html: htmls[xy]
+      }
+    });
+  }
 
   //邮件标题
   let em_title = "【EcnYou】讲座更新通知 " + dateFormat("YYYY-mm-dd", new Date()) + "期";
@@ -106,7 +125,7 @@ exports.main = async(event, context) => {
 
   //交换metaData中的lastTable和nextTable,以在下个周期收到新的邮件
   await db.collection('metaData').doc('1').update({
-    data:{
+    data: {
       lastTable: nextTab,
       nextTable: lastTab
     }

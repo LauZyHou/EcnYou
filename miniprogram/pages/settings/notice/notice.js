@@ -128,7 +128,7 @@ Page({
       fail: err => {
         wx.showToast({
           icon: 'none',
-          title: "出错!请反馈"
+          title: "如果没收到重发"
         });
         console.error(err);
       }

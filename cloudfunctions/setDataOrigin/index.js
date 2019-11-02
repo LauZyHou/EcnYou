@@ -56,12 +56,12 @@ exports.main = async(event, context) => {
     await db.collection('users').add({
       data: {
         _openid: user_openid,
-        mail: null,
+        email: null,
         dy1: num1,
         dy2: num2
       }
     }).then(res => {
-      if (res.errMsg == "collection.update:ok")
+      if (res.errMsg == "collection.add:ok")
         ok = true;
     });
   }

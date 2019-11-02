@@ -42,7 +42,7 @@ npm install cheerio
 
 #### 数据库
 
-集合有：`academy`,`codes`,`metaData`,`reportMsgA`,`reportMsgB`,`users`。
+集合有：`academy`,`codes`,`metaData`,`reportMsgA`,`reportMsgB`,`users`,`diffMsg`。
 
 在`metaData`中补充运行所需的元信息，具体是：
 
@@ -66,7 +66,7 @@ npm install cheerio
 
 - `getDataOrigin` 获取数据源数字并解析成['sei','cs']的形式
 
-- `mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户
+- `mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户,并交换新旧表
 
 - `refreshReportMsg` 仅用于测试触发器功能的云函数
 
