@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "preTrigger",
+      "type": "timer",
+      "config": "0 0 11 * * * *"
+    }
+  ]
+}

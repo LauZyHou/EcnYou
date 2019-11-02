@@ -11,8 +11,6 @@ cloud.init();
 
 // 云函数入口函数,爬取数据并写入next集合
 exports.main = async(event, context) => {
-  const wxContext = cloud.getWXContext();
-  let user_openid = wxContext.OPENID;
   const db = cloud.database();
   const _ = db.command;
 
