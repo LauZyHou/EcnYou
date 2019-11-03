@@ -36,6 +36,12 @@ npm install superagent
 npm install cheerio
 ```
 
+对于使用了邮箱服务的云函数（如`mainTrigger`和`sendEmail2`），还应：
+
+```bash
+npm install nodemailer
+```
+
 以生成`package-lock.json`，这样上传后云端才知道安装哪些包。
 
 ### 部署
@@ -62,19 +68,17 @@ npm install cheerio
 
 - `breakBinding` 用户解除绑定邮箱
 
-- `crawInNextTable` 爬取数据，写入next集合(见metaData集合)
+- `crawInNextTable` 实际是个触发器。爬取数据，写入next集合(见metaData集合)
 
 - `diffTrigger` 从新旧集合生成每个学院的更新HTML,写入diffMsg集合并返回
 
-- `genInNextHTML` 从`nextTable`生成`nextHTML`集合,以让用户能直接获取学术报告信息
+- `exchangeTrigger` 交换在metaData中的AB表
 
 - `getAcademy` 获取新表中学院id->[{name:"讲座标题",url:"完整url"},...]的映射信息
 
 - `getDataOrigin` 获取数据源数字并解析成['sei','cs']的形式
 
-- [作废]`mainTrigger` 主触发器,用于比较新旧数据,形成邮件并按订阅发给用户,并交换新旧表
-
-- `refreshReportMsg` 仅用于测试触发器功能的云函数
+- `mainTrigger` 形成邮件并按订阅发给用户
 
 - `sendEmail2` 向用户发送邮件,传入主题、收件人、内容HTML
 
@@ -104,12 +108,22 @@ npm install cheerio
 
 由于云开发服务器的性能非常非常差，且超时时间最多只有20秒，且每次查询最多100条，不得不将业务分开写，并用多次随机执行的方式保证爬取效果
 
-1. 一次`resetTrigger`，重置所有学院为未爬取(`crawed:false`)，重置metaData中邮件发送编号为0(`email_num: 0`)
+1. 一次`resetTrigger`，重置所有学院为未爬取(`crawed:false`)，未diff(`diffed:false`)，重置metaData中邮件发送编号为0(`email_num: 0`)
+
+时机：每天17:00
 
 2. 一次`exchangeTrigger`，交换在metaData中的AB表
 
+时机：每天17:01
+
 3. 若干次`crawInNextTable`爬取新信息，对于为`crawed:true`状态的学院不再爬取
 
-4. 一次`diffTrigger`，将diff信息写入diffMsg表，对于为`diffed:true`的学院不再做此操作
+时机：每天17:03-17:06，每25秒运行一次
 
-5. 若干次`mainTrigger`向用户发邮件，每次发送10个(en<=uid<en+10)，发送后设置email_num += 10
+4. 若干次`diffTrigger`，将diff信息写入diffMsg表，对于为`diffed:true`的学院不再做此操作
+
+时机：每天17:07-17:09，每25秒运行一次
+
+5. 若干次`mainTrigger`向用户发邮件，每次发送`uid`在`max_num`小区间内(`email_num<=uid<email_num+max_num`)的用户，发送后设置`email_num+=max_num`
+
+时机：每天17:10-17:40，每25秒运行一次（如`max_num=5`这样至少可以服务300个用户，视用户数目提升延后结束时间）

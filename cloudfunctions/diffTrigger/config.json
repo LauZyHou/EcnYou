@@ -3,7 +3,7 @@
     {
       "name": "diffTrigger",
       "type": "timer",
-      "config": "*/25 10-12 11 * * * *"
+      "config": "*/25 7-9 17 * * * *"
     }
   ]
 }

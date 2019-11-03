@@ -19,3 +19,4 @@ miniprogram/style/ali_icon.wxss
 
 # 邮箱配置文件
 cloudfunctions/sendEmail2/config.js
+cloudfunctions/mainTrigger/config.js

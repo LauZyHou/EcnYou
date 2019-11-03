@@ -3,7 +3,7 @@
     {
       "name": "exchangeTrigger",
       "type": "timer",
-      "config": "0 10 9 * * * *"
+      "config": "0 1 17 * * * *"
     }
   ]
 }

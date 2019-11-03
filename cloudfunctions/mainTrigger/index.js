@@ -1,7 +1,28 @@
 // 云函数入口文件
-const cloud = require('wx-server-sdk')
+const cloud = require('wx-server-sdk');
+var config = require('config');
+//引入发送邮件的类库
+var nodemailer = require('nodemailer');
 
-cloud.init();
+cloud.init({
+  // API 调用都保持和云函数当前所在环境一致
+  env: cloud.DYNAMIC_CURRENT_ENV
+});
+
+//----------------------------------------------------------
+
+// 创建一个SMTP客户端配置
+var config = {
+  service: 'QQ', //邮箱类型
+  auth: {
+    user: 'ecnyou@foxmail.com', //邮箱账号
+    pass: config.email.pass //邮箱的授权码
+  }
+};
+// 创建一个SMTP客户端对象
+var transporter = nodemailer.createTransport(config);
+
+//----------------------------------------------------------
 
 //每次调用此触发器,处理的用户uid区间长度
 //实际上uid可能重复,区间里不一定仅这么多用户
@@ -51,14 +72,13 @@ exports.main = async(event, context) => {
       }
     }
     //[异步]只要结果不为"",就说明用户的订阅有更新,向用户发送邮件
+    //*触发器内无法调用云函数,所以sendEmail2拿出来用
     if (em_html.length > 0) {
-      cloud.callFunction({
-        name: 'sendEmail2',
-        data: {
-          subject: em_title,
-          to: userData[i]['email'],
-          html: em_html
-        }
+      transporter.sendMail({
+        from: 'ecnyou@foxmail.com',
+        subject: em_title,
+        to: userData[i]['email'],
+        html: em_html
       });
     }
   }
@@ -109,3 +129,25 @@ function getDyArray(num1, num2) {
 }
 
 //----------------------------------------------------------
+
+//日期格式化
+function dateFormat(fmt, date) {
+  let ret;
+  let opt = {
+    "Y+": date.getFullYear().toString(), // 年
+    "m+": (date.getMonth() + 1).toString(), // 月
+    "d+": date.getDate().toString(), // 日
+    "H+": date.getHours().toString(), // 时
+    "M+": date.getMinutes().toString(), // 分
+    "S+": date.getSeconds().toString() // 秒
+    // 有其他格式化字符需求可以继续添加，必须转化成字符串
+  };
+  for (let k in opt) {
+    ret = new RegExp("(" + k + ")").exec(fmt);
+    if (ret) {
+      fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+    };
+  };
+  return fmt;
+}
+
