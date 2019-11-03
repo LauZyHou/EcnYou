@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "exchangeTrigger",
+      "type": "timer",
+      "config": "0 10 9 * * * *"
+    }
+  ]
+}

@@ -100,5 +100,16 @@ npm install cheerio
 
 - `todo-list` 计划任务
 
+## 触发器次序和功能说明
 
+由于云开发服务器的性能非常非常差，且超时时间最多只有20秒，且每次查询最多100条，不得不将业务分开写，并用多次随机执行的方式保证爬取效果
 
+1. 一次`resetTrigger`，重置所有学院为未爬取(`crawed:false`)，重置metaData中邮件发送编号为0(`email_num: 0`)
+
+2. 一次`exchangeTrigger`，交换在metaData中的AB表
+
+3. 若干次`crawInNextTable`爬取新信息，对于为`crawed:true`状态的学院不再爬取
+
+4. 一次`diffTrigger`，将diff信息写入diffMsg表，对于为`diffed:true`的学院不再做此操作
+
+5. 若干次`mainTrigger`向用户发邮件，每次发送10个(en<=uid<en+10)，发送后设置email_num += 10

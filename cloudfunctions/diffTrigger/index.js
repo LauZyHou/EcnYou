@@ -3,7 +3,7 @@ const cloud = require('wx-server-sdk')
 
 cloud.init()
 
-// 云函数入口函数,从新旧集合生成每个学院的更新HTML
+//[触发器顺序=4]从新旧集合生成每个学院的更新HTML
 exports.main = async(event, context) => {
   const db = cloud.database();
   const _ = db.command;
@@ -13,20 +13,22 @@ exports.main = async(event, context) => {
   let nextTab = metadata.data.nextTable;
   let lastTab = metadata.data.lastTable;
 
-  let xys = dy1.concat(dy2);
-  // console.log(xys);
+  //获取所有学院
+  let aca = await db.collection('academy').get();
+  aca = aca.data;
+
   let xy2url = {};
   let xy2html = {};
   //对每个学院
-  for (let xy of xys) {
+  for (let i = 0; i < aca.length; i++) {
+    //对于diffed=true的跳过
+    if (aca[i].diffed == true)
+      continue;
+    let xy = aca[i].xyId;
     //形成到Url的映射
-    let xydata = await db.collection('academy').where({
-      xyId: xy
-    }).get();
-    // console.log(xy);
-    xy2url[xy] = xydata.data[0].xyUrl;
+    xy2url[xy] = aca[i].xyUrl;
     //查询新旧表中该学院的tit,新表中还要形成hash映射tit->href
-    xy2html[xy] = "";
+    xy2html[xy] = ""; //初始字符串
     //旧
     let old_tit_data = await db.collection(lastTab).where({
       xyId: xy
@@ -55,9 +57,17 @@ exports.main = async(event, context) => {
       xy2html[xy] += d + '<br>' + xy2url[xy] + tit2href[d] + '<br><br>';
     }
     //保存到集合
-    db.collection('diffMsg').doc(xy).set({
+    await db.collection('diffMsg').doc(xy).set({
       data: {
         html: xy2html[xy]
+      }
+    });
+    //本学院所有操作都完成后,设置diffed=true
+    await db.collection('academy').where({
+      xyId: xy
+    }).update({
+      data: {
+        diffed: true
       }
     });
   }

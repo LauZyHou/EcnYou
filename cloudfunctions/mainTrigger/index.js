@@ -1,108 +1,44 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
 
-cloud.init()
+cloud.init();
 
-//[作废]
-// 云函数入口函数,比较新旧数据,形成邮件并按订阅发给用户
+//每次调用此触发器,处理的用户uid区间长度
+//实际上uid可能重复,区间里不一定仅这么多用户
+var max_num = 5;
+
+//[触发器顺序=5]从diffMsg中取出HTML,并按订阅发邮件给用户
 exports.main = async(event, context) => {
+  //从metaData中取出数字
   const db = cloud.database();
   const _ = db.command;
-
-  //获取新旧集合名字
   let metadata = await db.collection('metaData').doc('1').get();
-  let nextTab = metadata.data.nextTable;
-  let lastTab = metadata.data.lastTable;
-
-  //后续将按照标题查询,这里按照标题分出新集合中旧集合没有的内容
-  let oldSet = new Set();
-  let newSet = new Set();
-  let oldData = await db.collection(lastTab).get();//[!]这里超出100限制了
-  for (let i = 0; i < oldData.data.length; i++)
-    oldSet.add(oldData.data[i]['title']);
-  let newData = await db.collection(nextTab).get();
-  for (let i = 0; i < newData.data.length; i++)
-    newSet.add(newData.data[i]['title']);
-  console.log(newSet);
-
-  let diffSet = difference(newSet, oldSet);
-  console.log(diffSet);
-
-  //查询这些标题对应讲座的信息
-  let useData = await db.collection(nextTab).where({
-    title: _.in(Array.from(diffSet))
-  }).get();
-  useData = useData.data;
-  // console.log(useData);
-
-  //对这些学院去重
-  let useOriginSet = new Set();
-  for (let i = 0; i < useData.length; i++)
-    useOriginSet.add(useData[i]['xyId']);
-  //查询这些学院的详细信息,形成{xyId:xyURL1,...}
-  let xyData = await db.collection('academy').where({
-    xyId: _.in(Array.from(useOriginSet))
-  }).get();
-  xyData = xyData.data;
-  xyHash = {};
-  for (let i = 0; i < xyData.length; i++)
-    xyHash[xyData[i]['xyId']] = xyData[i]['xyUrl'];
-  console.log(xyHash);
-
-  /*
-  //构成{xyId:[{title:"xxx",url:"xxx"},...],...}的报告json结构
-  let origin2 = {};
-  for (let x of useData) { //对每个具体的新讲座信息
-    let xy = x['xyId'];
-    if (origin2[xy] == undefined)
-      origin2[xy] = new Array();
-    origin2[xy].push({
-      title: x['title'],
-      url: xyHash[xy] + x['href']
-    });
-  }
-  // console.log(origin2);
-  */
-
-  //构成{xyId:"title+<br>+xyUrl+href+<br><br>",...}的报告html结构
-  let htmls = {};
-  for (let x of useData) { //对每个具体的新讲座信息
-    let xy = x['xyId'];
-    if (htmls[xy] == undefined)
-      htmls[xy] = "";
-    htmls[xy] += x['title'] + '<br>' + xyHash[xy] + x['href'] + '<br><br>';
-  }
-  // console.log(htmls);
-
-  //保存报表(同步删除,异步添加)
-  /*
-  //删除全部
-  await db.collection('diffMsg').where({
-    _id: _.neq(0)
-  }).remove();
-  //添加一条时间记录,以在没有新讲座时仍知道此触发器触发了
-  db.collection('diffMsg').add({
-    data: {
-      add_time: dateFormat("YYYY-mm-dd HH:MM", new Date())
-    }
-  });
-  //添加若干的新讲座记录
-  for (let xy of useOriginSet) {
-    db.collection('diffMsg').add({
-      data: {
-        xyId: xy,
-        html: htmls[xy]
-      }
-    });
-  }
-  */
+  let email_num = metadata.data.email_num; //当前发送到的用户序号
 
   //邮件标题
   let em_title = "【EcnYou】讲座更新通知 " + dateFormat("YYYY-mm-dd", new Date()) + "期";
-  //对每个用户发送订阅邮件
-  let userData = await db.collection('users').get();
+
+  //只搜索[email_num,email_num+max_num)左闭右开区间的用户
+  let userData = await db.collection('users').where({
+    uid: _.lt(email_num + max_num),
+    uid: _.gte(email_num)
+  }).get();
   userData = userData.data;
+  if (userData.length == 0) //区间里已经没有用户,提早结束
+    return {
+      ok: true
+    }
+
+  //取出diffMsg中的更新信息
+  let diffData = await db.collection('diffMsg').get();
+  diffData = diffData.data;
+  htmls = {}
+  for (let i = 0; i < diffData.length; i++)
+    htmls[diffData[i]._id] = diffData[i].html;
+
+  //对每个用户发送订阅邮件
   for (let i = 0; i < userData.length; i++) {
+    //没有邮箱,跳过
     if (userData[i]['email'] == null || userData[i]['email'].length == 0)
       continue;
     //解析用户的dy1和dy2
@@ -110,13 +46,12 @@ exports.main = async(event, context) => {
     let em_html = "";
     //遍历用户的所有订阅,找当前有更新的订阅,连接HTML
     for (let dy of dy_array) {
-      if (useOriginSet.has(dy)) {
+      if (htmls[dy].length > 0) {
         em_html += htmls[dy];
       }
     }
-    //只要结果不为"",就说明用户的订阅有更新,向用户发送邮件
+    //[异步]只要结果不为"",就说明用户的订阅有更新,向用户发送邮件
     if (em_html.length > 0) {
-      /*
       cloud.callFunction({
         name: 'sendEmail2',
         data: {
@@ -125,24 +60,19 @@ exports.main = async(event, context) => {
           html: em_html
         }
       });
-      */
     }
   }
+
+  //这一组完成后,设置email_num,本触发器多次执行,email_num是公共资源,这里不能异步
+  await db.collection('metaData').doc('1').update({
+    data: {
+      email_num: email_num + max_num
+    }
+  });
 
   return {
     ok: true
   }
-}
-
-//----------------------------------------------------------
-
-//集合差集
-function difference(setA, setB) {
-  var _difference = new Set(setA);
-  for (var elem of setB) {
-    _difference.delete(elem);
-  }
-  return _difference;
 }
 
 //----------------------------------------------------------
@@ -176,29 +106,6 @@ function getDyArray(num1, num2) {
   }
 
   return Array.from(dy_st);
-}
-
-//----------------------------------------------------------
-
-//日期格式化
-function dateFormat(fmt, date) {
-  let ret;
-  let opt = {
-    "Y+": date.getFullYear().toString(), // 年
-    "m+": (date.getMonth() + 1).toString(), // 月
-    "d+": date.getDate().toString(), // 日
-    "H+": date.getHours().toString(), // 时
-    "M+": date.getMinutes().toString(), // 分
-    "S+": date.getSeconds().toString() // 秒
-    // 有其他格式化字符需求可以继续添加，必须转化成字符串
-  };
-  for (let k in opt) {
-    ret = new RegExp("(" + k + ")").exec(fmt);
-    if (ret) {
-      fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-    };
-  };
-  return fmt;
 }
 
 //----------------------------------------------------------

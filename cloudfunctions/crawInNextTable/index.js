@@ -9,7 +9,7 @@ const cheerio = require("cheerio");
 
 cloud.init();
 
-// 云函数入口函数,爬取数据并写入next集合
+//[触发器顺序=3]爬取数据并写入next集合,对于为`crawed:true`状态的学院不再爬取
 exports.main = async(event, context) => {
   const db = cloud.database();
   const _ = db.command;
@@ -24,19 +24,6 @@ exports.main = async(event, context) => {
   // console.log(aca.data);
   // console.log(nextTab);
 
-  //将交换改放到此触发器的最前面,否则查看到的学术报告在更新后仍然是旧的,直到下次更新
-  //交换metaData中的lastTable和nextTable,以在下个周期收到新的邮件
-  await db.collection('metaData').doc('1').update({
-    data: {
-      lastTable: nextTab,
-      nextTable: lastTab
-    }
-  });
-  //在变量里也要做交换,主要是此触发器需要使用当前正确的nextTable名
-  let t = nextTab;
-  nextTab = lastTab;
-  lastTab = t;
-
   //删除next表中所有内容
   /*
   await db.collection(nextTab).where({
@@ -47,6 +34,8 @@ exports.main = async(event, context) => {
   //遍历每个数据源,爬取信息写入next表
   for (let i = 0; i < aca.data.length; i++) {
     let item = aca.data[i];
+    if (item['crawed'] == true) //对爬取过的直接跳过
+      continue;
     let xyId = item['xyId']; //学院的字母缩写表示
     let xyUrl = item['xyUrl']; //学院前缀
     let suffix = item['suffix']; //要爬取的URL后缀
@@ -110,26 +99,33 @@ exports.main = async(event, context) => {
     for (let i = 0; i < titles.length; i++) {
       try {
         //只更新没有的记录,防止过多次写入数据库导致超时
-        db.collection(nextTab).where({
+        let res = await db.collection(nextTab).where({
           xyId: xyId,
           href: hrefs[i],
-        }).count().then(res => {
-          if (res.total == 0) {
-            db.collection(nextTab).add({
-              data: {
-                xyId: xyId,
-                title: titles[i],
-                href: hrefs[i], //不保存URL前缀,前端读下来再拼上
-                publish_time: times[i], //注意这是发布时间,不是报告的时间
-                add_time: nowtime //在数据库中添加条目的时间
-              }
-            });
-          }
-        });
+        }).count();
+        if (res.total == 0) {
+          await db.collection(nextTab).add({
+            data: {
+              xyId: xyId,
+              title: titles[i],
+              href: hrefs[i], //不保存URL前缀,前端读下来再拼上
+              publish_time: times[i], //注意这是发布时间,不是报告的时间
+              add_time: nowtime //在数据库中添加条目的时间
+            }
+          });
+        }
       } catch (e) {
         console.error(e);
       }
     }
+    //本数据源的爬取和写入操作全部结束,记录其为"已经处理过"
+    await db.collection('academy').where({
+      xyId: xyId
+    }).update({
+      data: {
+        crawed: true
+      }
+    });
   }
 
   return {
