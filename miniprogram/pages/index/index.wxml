@@ -33,10 +33,10 @@
   </view>
 
   <!-- 客服按钮 -->
-  <view class="foot">
+  <!-- <view class="foot">
     联系后台
     <contact-button size="18"></contact-button>
-  </view>
+  </view> -->
 
 
 

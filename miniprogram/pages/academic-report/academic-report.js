@@ -95,7 +95,7 @@ Page({
       data: that.data.data_list[idx]['url'],
       success: function(res) {
         wx.showToast({
-          title: '复制成功',
+          title: '链接复制成功',
         });
       }
     });

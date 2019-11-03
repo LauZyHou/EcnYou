@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./README_PIC/ecnyou.png" width="150px" height="150px"/>
+<img src="http://lauzyhou.gitee.io/pic/EcnYou/ecnyou.png" width="150px" height="150px"/>
 </p>
 
 <p align="center">
