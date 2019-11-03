@@ -3,7 +3,7 @@
     {
       "name": "mainTrigger",
       "type": "timer",
-      "config": "*/25 10-40 17 * * * *"
+      "config": "*/25 30-59 19 * * * *"
     }
   ]
 }

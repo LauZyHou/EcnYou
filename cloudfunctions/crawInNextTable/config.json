@@ -3,7 +3,7 @@
     {
       "name": "preTrigger",
       "type": "timer",
-      "config": "*/25 3-6 17 * * * *"
+      "config": "*/25 3-23 19 * * * *"
     }
   ]
 }

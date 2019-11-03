@@ -10,7 +10,7 @@ exports.main = async(event, context) => {
   //获取新表名
   let xb = await db.collection('metaData').doc('1').get();
   xb = xb.data.nextTable;
-  console.log(xb);
+  // console.log(xb);
 
   //获取学院信息
   let xyMsg = await db.collection('academy').get();
@@ -30,7 +30,7 @@ exports.main = async(event, context) => {
     //对该学院的每个讲座
     let aca = await db.collection(xb).where({
       xyId: xyId
-    }).get();
+    }).orderBy('publish_time', 'desc').orderBy('title', 'desc').get();
     aca = aca.data;
     for (let j = 0; j < aca.length; j++) {
       ret[xyId].push({

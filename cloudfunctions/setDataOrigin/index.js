@@ -53,12 +53,15 @@ exports.main = async(event, context) => {
   let ok = false;
   //没有就直接创建
   if (cnt.total == 0) {
+    //[feature]添加用户uid为当前表中用户数
+    let unum = await db.collection('users').count();
     await db.collection('users').add({
       data: {
         _openid: user_openid,
         email: null,
         dy1: num1,
-        dy2: num2
+        dy2: num2,
+        uid: unum.total
       }
     }).then(res => {
       if (res.errMsg == "collection.add:ok")

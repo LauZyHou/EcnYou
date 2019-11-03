@@ -19,6 +19,7 @@ exports.main = async(event, context) => {
   let metadata = await db.collection('metaData').doc('1').get();
   let nextTab = metadata.data.nextTable;
   let lastTab = metadata.data.lastTable;
+  let start = metadata.data.start; //上次爬取的起始位置
   // console.log(newTab);
 
   // console.log(aca.data);
@@ -32,10 +33,34 @@ exports.main = async(event, context) => {
   */
 
   //遍历每个数据源,爬取信息写入next表
+  //[bugfix]当网站挂掉时,一次调用都无法爬这个学院信息,导致后面爬不了
+  //这里要每次记录爬取的起始点
+  let kua = false; //跨过continue
   for (let i = 0; i < aca.data.length; i++) {
     let item = aca.data[i];
     if (item['crawed'] == true) //对爬取过的直接跳过
       continue;
+    if (kua == false) { //第一次跨过(kua==false)时,要记录本次爬取的起始位置
+      if (i == start) { //和上次爬取的起始位置一样,说明在这个学院卡住了
+        await db.collection('academy').where({
+          xyId: item['xyId']
+        }).update({
+          data: {
+            crawed: true, //设置为true防止影响后续爬取
+            isAlive: false //仅用于后台查看
+          }
+        });
+        continue;
+      } else { //不一样说明没卡住,这里也可以是上次循环卡住continue过来的
+        //总之在这里要设置kua和start
+        kua = true;
+        await db.collection('metaData').doc('1').update({
+          data: {
+            start: i
+          }
+        });
+      }
+    }
     let xyId = item['xyId']; //学院的字母缩写表示
     let xyUrl = item['xyUrl']; //学院前缀
     let suffix = item['suffix']; //要爬取的URL后缀
@@ -51,6 +76,7 @@ exports.main = async(event, context) => {
       .then(res => {
         return res.text;
       });
+    // console.log(content);
 
     //cheerio也就是nodejs下的jQuery,将整个文档包装成一个集合,定义一个变量$接收
     let $ = cheerio.load(content);

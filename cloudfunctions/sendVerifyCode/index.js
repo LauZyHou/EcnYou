@@ -67,9 +67,6 @@ exports.main = async(event, context) => {
     }).update({
       data: {
         try_num: record.try_num + 1
-      },
-      success: res => {
-        console.log("更新成功!");
       }
     });
     return {
@@ -83,12 +80,15 @@ exports.main = async(event, context) => {
     _openid: user_openid
   }).count();
   if (num.total == 0) { //新用户,加入
+    //[feature]添加用户uid为当前表中用户数
+    let unum = await db.collection('users').count();
     await db.collection('users').add({
       data: {
         "_openid": user_openid,
         "email": record.email,
         "dy1": 0,
-        "dy2": 0
+        "dy2": 0,
+        "uid": unum.total
       }
     });
   } else { //老用户,更新

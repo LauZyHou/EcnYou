@@ -3,7 +3,7 @@
     {
       "name": "resetTrigger",
       "type": "timer",
-      "config": "0 0 17 * * * *"
+      "config": "0 0 19 * * * *"
     }
   ]
 }
