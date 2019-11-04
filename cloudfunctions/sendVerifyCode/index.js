@@ -86,8 +86,8 @@ exports.main = async(event, context) => {
       data: {
         "_openid": user_openid,
         "email": record.email,
-        "dy1": 0,
-        "dy2": 0,
+        "dy1": -1,
+        "dy2": 1,
         "uid": unum.total
       }
     });

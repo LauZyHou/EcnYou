@@ -19,6 +19,8 @@ exports.main = async(event, context) => {
 
   let xy2url = {};
   let xy2html = {};
+  let today = dateFormat("YYYY-mm-dd", new Date());
+
   //对每个学院
   for (let i = 0; i < aca.length; i++) {
     //对于diffed=true的跳过
@@ -46,15 +48,20 @@ exports.main = async(event, context) => {
     for (let i = 0; i < new_tit_data.length; i++)
       ntd.add(new_tit_data[i].title);
     let tit2href = {};
+    //[bugfix]只记录add_time在今天的那些tit2href
+    //这是为了防止这样的情形:第一天爬取了新信息,第二天开始校园网封锁,此后每隔一天则会diff出发送过的信息
     for (let i = 0; i < new_tit_data.length; i++) {
-      tit2href[new_tit_data[i].title] = new_tit_data[i].href;
+      //"2019-11-02 23:33".substr(0,10)=="2019-11-02"
+      if (new_tit_data[i].add_time.substr(0, 10) == today)
+        tit2href[new_tit_data[i].title] = new_tit_data[i].href;
     }
 
     //差集
     let diffSet = difference(ntd, otd);
     //遍历差集中的新标题,构成本xy的html
     for (let d of diffSet) {
-      xy2html[xy] += d + '<br>' + xy2url[xy] + tit2href[d] + '<br><br>';
+      if (tit2href[d] != undefined)
+        xy2html[xy] += d + '<br>' + xy2url[xy] + tit2href[d] + '<br><br>';
     }
     //保存到集合
     await db.collection('diffMsg').doc(xy).set({

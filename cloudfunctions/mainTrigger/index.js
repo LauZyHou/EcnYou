@@ -26,7 +26,7 @@ var transporter = nodemailer.createTransport(config);
 
 //每次调用此触发器,处理的用户uid区间长度
 //实际上uid可能重复,区间里不一定仅这么多用户
-var max_num = 5;
+var max_num = 10;
 
 //[触发器顺序=5]从diffMsg中取出HTML,并按订阅发邮件给用户
 exports.main = async(event, context) => {
@@ -40,14 +40,14 @@ exports.main = async(event, context) => {
   let em_title = "【EcnYou】讲座更新通知 " + dateFormat("YYYY-mm-dd", new Date()) + "期";
 
   //只搜索[email_num,email_num+max_num)左闭右开区间的用户
+  //[bugfix]解决gte覆盖lt条件导致重复发送的问题
   let userData = await db.collection('users').where({
-    uid: _.lt(email_num + max_num),
-    uid: _.gte(email_num)
+    uid: _.lt(email_num + max_num).gte(email_num)
   }).get();
   userData = userData.data;
   if (userData.length == 0) //区间里已经没有用户,提早结束
     return {
-      ok: true
+      ok: false
     }
 
   //取出diffMsg中的更新信息
