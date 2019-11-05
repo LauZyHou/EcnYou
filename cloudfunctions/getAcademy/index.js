@@ -30,7 +30,7 @@ exports.main = async(event, context) => {
     //对该学院的每个讲座
     let aca = await db.collection(xb).where({
       xyId: xyId
-    }).orderBy('publish_time', 'desc').orderBy('title', 'desc').get();
+    }).orderBy('publish_time', 'desc').orderBy('add_time', 'desc').orderBy('title', 'desc').get();
     aca = aca.data;
     for (let j = 0; j < aca.length; j++) {
       ret[xyId].push({

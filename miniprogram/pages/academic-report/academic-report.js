@@ -19,18 +19,33 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
+    let that = this;
+    //调用云函数获取学院讲座信息
     wx.cloud.callFunction({
       name: 'getAcademy',
       data: {},
       success: res => {
         // console.log(res);
         acas = res.result;
-        this.setData({
-          loaded: true,
-          data_list: acas[xy_ids[0]] //默认软件学院
+        //从本地数据缓存取得用户上次访问的下标
+        wx.getStorage({
+          key: 'myindex',
+          success: function(res) { //成功获取时,设置为上次访问
+            that.setData({
+              index: res.data,
+              loaded: true,
+              data_list: acas[xy_ids[res.data]]
+            });
+          },
+          fail: function(err) { //获取失败时,使用默认的软件学院
+            that.setData({
+              loaded: true,
+              data_list: acas[xy_ids[0]]
+            });
+          }
         });
       },
-      fail: err => {
+      fail: err => { //获取讲座信息失败
         console.error(err);
       }
     });
@@ -85,6 +100,18 @@ Page({
 
   },
 
+  //----------------------------------------------------------
+
+  //本地数据缓存
+  _stodata: function() {
+    wx.setStorage({
+      key: 'myindex',
+      data: this.data.index,
+    });
+  },
+
+  //----------------------------------------------------------
+
   //[点击]某一项进行复制
   copyBtn: function(e) {
     // console.log(e);
@@ -107,5 +134,6 @@ Page({
       index: e.detail.value,
       data_list: acas[xy_ids[e.detail.value]]
     });
+    this._stodata();
   }
 })
